@@ -1,0 +1,40 @@
+#version 330 core
+
+in vec3 vColor;
+in vec2 texCoord;
+in vec3 Normal;
+in vec3 currentPos;
+
+out vec4 color;
+
+uniform vec4 lightColor;
+uniform vec3 lightPos;
+uniform vec3 camPos;
+uniform sampler2D tex0;
+uniform sampler2D tex1;
+
+void main()
+{
+	float ambient = 0.1;
+	vec3 normal = normalize(Normal);
+	vec3 lightDirection = normalize(lightPos - currentPos);
+	
+	float diffuse = max(dot(normal, lightDirection), 0.0f);
+	
+	float specularLight = 0.5f;
+	vec3 viewDirection = normalize(camPos - currentPos);
+	vec3 reflectionDirection = reflect(-lightDirection, normal);
+	float specularAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0f), 16);
+	float specular = specularAmount * specularLight;
+	
+	vec4 tex = texture(tex0, texCoord);
+	if(tex[3] == 1.0f){
+		color = vec4(0.5f, 0.5f, 0.5f, 1.0f);
+	}
+	else{
+		color = vec4(vColor, 1.0f);
+	}
+	
+    color = color * lightColor * (diffuse + ambient) + texture(tex1, texCoord).r * specular;
+
+}

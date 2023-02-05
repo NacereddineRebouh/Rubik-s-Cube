@@ -1,0 +1,24 @@
+#version 330 core
+
+layout(location = 0) in vec3 VertexPosition;
+layout(location = 1) in vec3 VertexColor;
+layout(location = 2) in vec2 VertexTex;
+layout(location = 3) in vec3 VertexNormal;
+
+uniform mat4 MVP;
+uniform mat4 Model;
+
+out vec2 texCoord;
+out vec3 Normal;
+out vec3 currentPos;
+out vec3 vColor;
+
+void main(){
+    gl_Position.xyz = VertexPosition;
+    gl_Position.w = 1.0;
+    texCoord = VertexTex;
+    gl_Position = MVP * vec4(VertexPosition, 1);
+	Normal = VertexNormal;
+	currentPos = vec3(Model * vec4(VertexPosition, 1));
+	vColor = VertexColor;
+}
